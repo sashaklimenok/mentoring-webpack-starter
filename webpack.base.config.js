@@ -25,10 +25,17 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(png|jpg|gif|svg|jpeg)$/,
-        loader: "file-loader",
-        options: {
-          name: "[name].[ext]",
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: "asset/resource",
+        generator: {
+          filename: "[path][name][ext]",
+        },
+      },
+      {
+        test: /\.(woff2?|ttf|eot)(\?v=\w+)?$/,
+        type: "asset/resource",
+        generator: {
+          filename: "[path][name][ext]",
         },
       },
       {
