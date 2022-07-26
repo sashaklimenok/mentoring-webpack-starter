@@ -2,12 +2,18 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const fs = require('fs');
 
 const PATHS = {
   src: path.resolve(__dirname, "./src"),
   dist: path.resolve(__dirname, "./dist"),
   assets: "assets/",
 };
+
+const PAGES_DIR = `${PATHS.src}/pages/`;
+const PAGES = fs
+  .readdirSync(PAGES_DIR)
+  .filter((fileName) => fileName.endsWith(".pug"));
 
 module.exports = {
   externals: {
@@ -50,6 +56,10 @@ module.exports = {
         },
       },
       {
+        test: /\.pug$/,
+        loader: "pug-loader",
+      },
+      {
         test: /\.m?js$/,
         exclude: /(node_modules|bower_components)/,
         use: {
@@ -89,10 +99,13 @@ module.exports = {
     ],
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: `${PATHS.src}/index.html`,
-      filename: "index.html",
-    }),
+    ...PAGES.map(
+      (page) =>
+        new HtmlWebpackPlugin({
+          template: `${PAGES_DIR}/${page}`,
+          filename: `./${page.replace(/\.pug/, ".html")}`,
+        })
+    ),
     new MiniCssExtractPlugin({
       filename: "css/[name].[hash].css",
     }),
