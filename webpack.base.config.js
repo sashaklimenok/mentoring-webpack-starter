@@ -17,11 +17,22 @@ module.exports = {
     app: PATHS.src,
   },
   output: {
-    filename: "js/[name].js",
+    filename: "js/[name].[hash].js",
     path: PATHS.dist,
     publicPath: "/",
   },
-
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          name: "vendors",
+          test: /node_modules/,
+          chunks: "all",
+          enforce: true,
+        },
+      },
+    },
+  },
   module: {
     rules: [
       {
@@ -79,12 +90,11 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      hash: false,
       template: `${PATHS.src}/index.html`,
       filename: "index.html",
     }),
     new MiniCssExtractPlugin({
-      filename: "css/[name].css",
+      filename: "css/[name].[hash].css",
     }),
     new CopyWebpackPlugin({
       patterns: [
